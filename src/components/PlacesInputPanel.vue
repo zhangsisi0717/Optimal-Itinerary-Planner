@@ -36,7 +36,7 @@
                         <button id="male-button" v-bind:class=" walkingIconClicked ? 'green' : 'white' "/></button>
                         <i class="male icon" v-on:click="walkingIconClicked = !walkingIconClicked"></i>
 
-                        <button class="small ui button" id="calculate">calculate</button>
+                        <button class="small ui button" id="calculate" @click="calculateDuration">calculate</button>
                     </div>
                     
                 </form>
@@ -53,12 +53,11 @@ export default{
     data(){
         return{
         address:"",
-        // addressSet: new Set(),
-        // location: {address:"",lat:null,lng:null},
         lat:"",
         lng:"",
         destinationArray:[],
         destinationArrayDetail:[],
+        allRoutes:[],
         errorMessage: "",
         spinner: false,
         apiKey: "AIzaSyAdxXoKAF0KG0yAWKXRiKyOby9YfHUxOug",
@@ -182,7 +181,86 @@ export default{
                 this.spinner = false
                 console.log(error.message)
             })
+        },
+
+        calculateDuration(){
+                // const locationDetail = {
+                //     address:this.address,
+                //     lat:this.lat,
+                //     lng:this.lng
+                //     };
+            let originsArray = [];
+            let destinationsArray = [];
+            for(let i=0; i<this.destinationArrayDetail.length;i++){
+                var place = new google.maps.LatLng(this.destinationArrayDetail[i].lat, this.destinationArrayDetail[i].lng);
+                originsArray.push(place);
+                destinationsArray.push(place);
+            }
+            
+            var service = new google.maps.DistanceMatrixService();
+            service.getDistanceMatrix(
+            {
+                origins: originsArray,
+                destinations: destinationsArray,
+                travelMode: 'DRIVING',
+                transitOptions: null,
+                drivingOptions: null,
+                unitSystem: null,
+                avoidHighways: null,
+                avoidTolls: null,
+            }, (response,status)=>{
+                if(status == "OK"){
+                    var routes = new Array(this.destinationArrayDetail.length);
+                    for (var idx = 0; idx < routes.length; idx++) {
+                        routes[idx] = new Array(routes.length);
+                    }
+
+                    var origins = response.originAddresses;                 
+                    var destinations = response.destinationAddresses;
+                  
+                    for (var i = 0; i < origins.length; i++) {
+                                      
+                        var results = response.rows[i].elements;
+                        for (var j = 0; j < results.length; j++) {
+                            var element = results[j];
+                            var distance = element.distance;
+                            var duration = element.duration;
+                            var from = origins[i];
+                            var to = destinations[j];
+                            console.log(i,j)
+                            console.log(`from,origins[i]=${origins[i]},to,destinations[j]=${destinations[j]}`);
+                            var route = {origin:from,destination:to, distance:distance,duration:duration};
+                            console.log(route);
+                            routes[i][j] = route;
+                        }
+                    }
+
+                    this.allRoutes = routes;
+                    console.log(this.allRoutes);
+                    
+                }
+                else if(status == "NOT_FOUND"){
+                    this.errorMessage = "The origin and/or destination of this pairing could not be geocoded."
+                }
+                else if(status == "ZERO_RESULTS"){
+                    this.errorMessage = "No route could be found between the origin and destination."
+                }
+
+            });
         }
+
+        // generateRoutesArray(){
+        //     routes = []
+        //     for (let i=0;i< this.destinationArrayDetail.length;i++){
+        //         for(let j=0; j<this.destinationArrayDetail.length;j++){
+        //             if(i!=j)
+        //             let route = {
+        //                 origin: this.destinationArrayDetail[i],
+        //                 destination: this.destinationArrayDetail[j]
+        //             }
+        //         }
+        //     }
+        // }
         // createRoutesList(){
 
         // }
