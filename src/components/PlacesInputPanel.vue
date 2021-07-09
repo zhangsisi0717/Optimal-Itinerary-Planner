@@ -36,7 +36,7 @@
                         <button id="male-button" v-bind:class=" walkingIconClicked ? 'green' : 'white' "/></button>
                         <i class="male icon" v-on:click="walkingIconClicked = !walkingIconClicked"></i>
 
-                        <button class="small ui button" id="calculate" @click="calculateDuration">calculate</button>
+                        <button class="small ui button" id="calculate" @click="calculateOptimalItinerary">calculate</button>
                     </div>
                     
                 </form>
@@ -182,13 +182,9 @@ export default{
                 console.log(error.message)
             })
         },
+ 
+        requestRoutesInfo(){
 
-        calculateDuration(){
-                // const locationDetail = {
-                //     address:this.address,
-                //     lat:this.lat,
-                //     lng:this.lng
-                //     };
             let originsArray = [];
             let destinationsArray = [];
             for(let i=0; i<this.destinationArrayDetail.length;i++){
@@ -229,7 +225,14 @@ export default{
                             var to = destinations[j];
                             console.log(i,j)
                             console.log(`from,origins[i]=${origins[i]},to,destinations[j]=${destinations[j]}`);
-                            var route = {origin:from,destination:to, distance:distance,duration:duration};
+
+                
+                            var route = {
+                                origin:{address:from,lat:this.destinationArrayDetail[i].lat, lng:this.destinationArrayDetail[i].lng},
+                                destination:{address:to,lat:this.destinationArrayDetail[j].lat, lng:this.destinationArrayDetail[j].lng}, 
+                                distance:distance,
+                                duration:duration,
+                                };
                             console.log(route);
                             routes[i][j] = route;
                         }
@@ -247,23 +250,12 @@ export default{
                 }
 
             });
+        },
+
+        calculateOptimalItinerary(){
+            this.requestRoutesInfo()
         }
 
-        // generateRoutesArray(){
-        //     routes = []
-        //     for (let i=0;i< this.destinationArrayDetail.length;i++){
-        //         for(let j=0; j<this.destinationArrayDetail.length;j++){
-        //             if(i!=j)
-        //             let route = {
-        //                 origin: this.destinationArrayDetail[i],
-        //                 destination: this.destinationArrayDetail[j]
-        //             }
-        //         }
-        //     }
-        // }
-        // createRoutesList(){
-
-        // }
     },
 
     mounted(){
