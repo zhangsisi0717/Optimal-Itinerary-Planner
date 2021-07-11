@@ -5,15 +5,15 @@
     </section>
     <div class="ui secondary menu" id="menu">
         <i class="home icon"></i>
-        <a class="ui item"><router-link :to="{ name: 'Mapview'}"> Home</router-link></a>
+        <a class="ui item"><router-link :to="{ name: 'Main'}"> Home</router-link></a>
         <i class="history icon" v-show="user"></i>
         <a class="ui item" v-show="user" id="history">History</a>
         <div class="right menu">
             <i class="user plus icon" id="user-plus"></i>
-            <a class= "ui item"><router-link :to="{ name: 'Signup'}">Signup</router-link></a>
-            <a class= "ui item" ><router-link :to="{ name: 'Login'}" v-if="!user">Login</router-link></a>
+            <a class= "ui item"><router-link :to="{ name: 'SignupPage'}">Signup</router-link></a>
+            <a class= "ui item" ><router-link :to="{ name: 'LoginPage'}" v-if="!user">Login</router-link></a>
             <i class="user circle icon" id="user-circle-icon" v-if="user"></i>
-            <a class="ui item" @click="logoutAccount" v-if="user"><router-link :to="{ name: 'Login'}">Logout</router-link></a>
+            <a class="ui item" v-if="user"><router-link :to="{ name: 'LoginPage'}">Logout</router-link></a>
         </div>
     </div>
     
@@ -31,14 +31,7 @@ export default{
         }
     },
 
-    methods:{
-          logoutAccount(){
-            console.log(this.user)
-            firebase.auth().signOut().then(()=>{
-              this.$router.push({name:"Login"}) //go back to route "Login"
-            })
-          }
-    },
+    methods:{},
 
     created(){
           console.log("run created")

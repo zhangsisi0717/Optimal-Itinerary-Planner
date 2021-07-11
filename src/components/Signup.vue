@@ -62,7 +62,7 @@ export default{
 
                         })
                     }).then(()=>{
-                        this.$router.push({name:"Mapview"}) //after it succeds, go to route "Mapview"
+                        this.$router.push({name:"Main"}) //after it succeds, go to route "Mapview"
                     }).catch(error=>{
                         this.message = error.message
                         console.log(this.message)
