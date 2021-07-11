@@ -54,7 +54,9 @@ export default{
               this.user = null
             }
           })
-        }
+        },
+    
+    mounted(){console.log("Navibar mounted")}
 }
 </script>
 

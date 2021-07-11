@@ -48,6 +48,8 @@
 
 <script>
 import axios from "axios"
+import {EventBus} from "@/EventBus"
+
 export default{
     name:"PlacesInputPanel",
     data(){
@@ -183,7 +185,7 @@ export default{
             })
         },
  
-        requestRoutesInfo(){
+        requestRoutesInfo(callback){
 
             let originsArray = [];
             let destinationsArray = [];
@@ -240,6 +242,7 @@ export default{
 
                     this.allRoutes = routes;
                     console.log(this.allRoutes);
+                    callback(this.allRoutes);
                     
                 }
                 else if(status == "NOT_FOUND"){
@@ -250,15 +253,26 @@ export default{
                 }
 
             });
+            
         },
 
         calculateOptimalItinerary(){
-            this.requestRoutesInfo()
+            this.requestRoutesInfo((allRoutesData)=>{
+                if(allRoutesData){
+                console.log("run here all routes")
+                // console.log(`this.allroutes=${this.allRoutes}`);
+                console.log(`this.allroutes[0][0]=${allRoutesData[0][1]}`);
+                // console.log(this.allRoutes[0][0]);
+                console.log("emit route-data, this.routes[0][0]")
+                EventBus.$emit("route-data",allRoutesData[0][1]);
+                
+                }
+            });
         }
-
     },
 
     mounted(){
+        
         var autocomplete = new google.maps.places.Autocomplete(
         this.$refs["autocomplete"],
       {
