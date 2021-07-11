@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <NaviBar/>
+    <!-- <NaviBar/> -->
     <!-- <PlacesInputPanel/> -->
     <!-- <Mapview/> -->
     <router-view/>

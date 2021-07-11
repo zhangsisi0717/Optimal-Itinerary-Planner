@@ -1,7 +1,6 @@
 <template>
     <div>
     <section id="header">
-        
         <h1 id="title">Optimal Itinerary Planner</h1>
     </section>
     <div class="ui secondary menu" id="menu">

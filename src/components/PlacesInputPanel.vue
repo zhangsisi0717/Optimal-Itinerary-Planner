@@ -1,5 +1,5 @@
 <template>
-    <section class="ui three column grid">
+    <section class="ui three column grid" id="input-panel">
         <div class="column">
             <form class="ui segment large form">
                 <div class="ui message red" v-show="errorMessage">{{errorMessage}}</div>
@@ -117,8 +117,16 @@ export default{
             }
         
             console.log(this.destinationArray);
+            this.renderAllStopsMarkers();
+
         }
         ,
+
+        renderAllStopsMarkers(){
+            console.log("render all stops markder called");
+            console.log("emit destination-array");
+            EventBus.$emit("destination-array",this.destinationArrayDetail);
+        },
 
 
         removeThisLocation(index){
@@ -129,6 +137,7 @@ export default{
             console.log(`after delete, current locations = ${this.destinationArrayDetail}`);
             console.log(this.destinationArrayDetail);
             }
+            this.renderAllStopsMarkers();
         },
 
 
@@ -139,8 +148,10 @@ export default{
             console.log(this.spinner)
             if(navigator.geolocation){ //check if user's browser support this Geolocation api
              navigator.geolocation.getCurrentPosition(pos=>{
-                 this.coordinateToAddress(pos.coords.latitude,pos.coords.longitude)
-                 console.log(pos.coords.latitude,pos.coords.longitude)
+                 this.lat = pos.coords.latitude;
+                 this.lng = pos.coords.longitude;
+                 this.coordinateToAddress(pos.coords.latitude,pos.coords.longitude);
+                 console.log(pos.coords.latitude,pos.coords.longitude);
                 //  this.spinner = false
              },
              errorMessage=>{
@@ -360,6 +371,11 @@ export default{
     position: relative;
     left: -20px;
     top: 20px;
+}
+
+#input-panel{
+    position: relative;
+    top: 40px
 }
 
 </style>
