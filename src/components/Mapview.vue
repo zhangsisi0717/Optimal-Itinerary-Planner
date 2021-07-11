@@ -17,29 +17,31 @@ export default {
     
     data(){
         return {
-            lat:40.754932,
-            lng:-73.984016,
+            lat:39.8283,
+            lng:-98.5795,
             showPlacesInputPanel:true
         }
         },
     methods:{
-        showUserLocationOnTheMap(latitude, longitude) {
+        showUserLocationOnTheMap(latitude, longitude,showMarker) {
         // Show & center the Map based oon
-        var map = new google.maps.Map(this.$refs["map"], {
-            zoom: 15,
-            center: new google.maps.LatLng(latitude, longitude),
-            mapTypeId: google.maps.MapTypeId.ROADMAP,
-        });
+            var map = new google.maps.Map(this.$refs["map"], {
+                zoom: 5,
+                center: new google.maps.LatLng(latitude, longitude),
+                mapTypeId: google.maps.MapTypeId.ROADMAP,
+            });
 
-        new google.maps.Marker({
-            position: new google.maps.LatLng(latitude, longitude),
-            draggable: true,
-            map: map,
-        });
-        },
+            if (showMarker){
+                new google.maps.Marker({
+                    position: new google.maps.LatLng(latitude, longitude),
+                    draggable: true,
+                    map: map,
+                });
+            }
+            },
 
         showRouteOntheMap(){
-        /* ROUTW FOMATL
+        /* ROUTE FOMAT
             route = {
             origin:{address:from,lat:this.destinationArrayDetail[i].lat, lng:this.destinationArrayDetail[i].lng},
             destination:{address:to,lat:this.destinationArrayDetail[j].lat, lng:this.destinationArrayDetail[j].lng}, 
@@ -78,24 +80,6 @@ export default {
                     else{console.log(status)}
                 })
             })
-            // const directionsService = new google.maps.DirectionsService();
-            // const directionsRenderer = new google.maps.directionsRenderer();
-            // EventBus.$on("route-data", data=>{
-            //     directionsService.route({
-            //         origin: data.origin.address,
-            //         destination: data.destination.address,
-            //         travelMode: "DRIVING"
-            //     }, (response,status)=>{
-            //         if (status === "OK"){
-            //             directionsRenderer.setDirections(response);
-            //             directionsRenderer.setMap(map);
-            //         }
-            //     })
-            
-            // )
-            
-
-            // } 
         }
     },
     
@@ -103,37 +87,35 @@ export default {
 
 
     mounted(){
+        this.showUserLocationOnTheMap(this.lat,this.lng,false)
 
-      var map = new google.maps.Map(this.$refs["map"], {
-        zoom: 15,
-        center: new google.maps.LatLng(39, -98.5795),
-        mapTypeId: google.maps.MapTypeId.ROADMAP,
-        gestureHandling: 'greedy',
-        draggable: true,
-      });
-
-    new google.maps.Marker({
-        position: new google.maps.LatLng(39.8283, -98.5795),
-        draggable: true,
-        map: map,
-      });
+        // if(navigator.geolocation){
+        //     navigator.geolocation.getCurrentPosition(pos=>{
+        //         this.lat = pos.coords.latitude;
+        //         this.lng = pos.coords.longitude;
+        //         this.showUserLocationOnTheMap(this.lat,this.lng)
+        //     },(err)=>{
+        //         this.showUserLocationOnTheMap(this.lat,this.lng)
+        //     })
+        // }
 
         // var map = new google.maps.Map(this.$refs["map"], {
-        //     minZoom:0,
-        //     maxZoom: 50,
-        //     zoomControl:true,
-        //     zoom: 5,
-        //     center: new google.maps.LatLng(39.8283, -98.5795),
-        //     gestureHandling: "auto",
-        //     mapTypeId: google.maps.MapTypeId.ROADMAP,
-        //     fullscreenControl: true
+        // zoom: 15,
+        // center: new google.maps.LatLng(39, -98.5795),
+        // mapTypeId: google.maps.MapTypeId.ROADMAP,
+        // gestureHandling: 'greedy',
+        // draggable: true,
         // });
-        console.log("created a new map");
+
+        // new google.maps.Marker({
+        //     position: new google.maps.LatLng(39.8283, -98.5795),
+        //     draggable: true,
+        //     map: map,
+        //     });
+
 
         const directionsService = new google.maps.DirectionsService();
-        console.log("init a directionsService")
         const directionsRenderer = new google.maps.DirectionsRenderer();
-        console.log("init a directionsRenderer")
 
         EventBus.$on("route-data",(data)=>{
             console.log("received data")
@@ -160,16 +142,6 @@ export default {
 </script>
 
 <style>
-/* .google-map{
-    width: 100%;
-    height: 100%;
-    margin: 0 auto;
-    background: #fff;
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: -1; 
-} */
 
 #map {
   position: absolute;

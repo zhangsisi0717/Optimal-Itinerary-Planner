@@ -6,8 +6,11 @@
                 <div class="ui segment">
                     <div class="field">
                         <div class = "ui right icon input large" :class="{loading:spinner}">
+                        <!-- <div class = "ui right icon input large"> -->
                             <input type="text" placeholder="Add your destinations" v-model="address" ref="autocomplete">
-                            <i class="dot circle link icon"  id="dot-icon" @click="findCurrentLocation"></i> 
+                            <!-- <div class="ui tiny active loader" v-show="spinner" id="loader1"></div>  -->
+                            <i class="dot circle link icon"  id="dot-icon" @click="findCurrentLocation"></i>
+                            
                         </div>
                         <button class="medium ui button" id="add-button" @click="addNewDestination">Add</button>
                         
@@ -103,14 +106,14 @@ export default{
                     this.errorMessage = "Address already exists";
                 }
                 else{
-                const locationDetail = {
-                    address:this.address,
-                    lat:this.lat,
-                    lng:this.lng
-                    };
-                    this.destinationArray.push(this.address);
-                    this.destinationArrayDetail.push(locationDetail)
-                }
+                    const locationDetail = {
+                        address:this.address,
+                        lat:this.lat,
+                        lng:this.lng
+                        };
+                        this.destinationArray.push(this.address);
+                        this.destinationArrayDetail.push(locationDetail)
+                    }
             }
         
             console.log(this.destinationArray);
@@ -120,12 +123,6 @@ export default{
 
         removeThisLocation(index){
             this.errorMessage = "";
-            // const index = this.destinationArray.indexOf(this.address);
-            // let index = this.destinationArray.findIndex(element => {
-            // if (element.address === place.address) {
-            //     return true;
-            // }
-            // });
             if (index > -1) {
             this.destinationArray.splice(index, 1);
             this.destinationArrayDetail.splice(index,1);
@@ -136,31 +133,28 @@ export default{
 
 
         findCurrentLocation(){
-            this.errorMessage="";
             this.spinner = true;
-
+            this.errorMessage="";
             console.log("locator start!");
             console.log(this.spinner)
             if(navigator.geolocation){ //check if user's browser support this Geolocation api
              navigator.geolocation.getCurrentPosition(pos=>{
-                //  this.latitude = pos.coords.latitude
-                //  this.longitude = pos.coords.longitude
                  this.coordinateToAddress(pos.coords.latitude,pos.coords.longitude)
                  console.log(pos.coords.latitude,pos.coords.longitude)
                 //  this.spinner = false
              },
              errorMessage=>{
                  this.errorMessage= "locator can not find your location, please input manually"
-                 this.spinner = false
+                //  this.spinner = false
                  console.log(errorMessage.message)
              });
             }
             else{
                 this.errorMessage = "browser does not support geolocation, please input manually"
-                this.spinner = false
+                // this.spinner = false
                 
             }
-            this.spinner = false
+            // this.spinner = false
         },
 
 
@@ -360,6 +354,12 @@ export default{
     left:15px;
     margin: -7px;
 
+}
+
+#loader1{
+    position: relative;
+    left: -20px;
+    top: 20px;
 }
 
 </style>
