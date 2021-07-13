@@ -58,17 +58,17 @@
                     </div>
                 <form class="ui segment"  v-show="stopsArray.length>0" id="tranportation">
                     <div id="trasnInside">
-                        <button id="car-button" v-bind:class=" carIconclicked ? 'green' : 'white' "/></button>
-                        <i class="car icon" v-on:click="carIconclicked = !carIconclicked"></i>
+                        <button id="car-button" v-bind:class=" driving ? 'green' : 'white' "/></button>
+                        <i class="car icon" @click="carIconClicked"></i>
 
-                        <button id="bicycle-button" v-bind:class=" bicycleIconClicked ? 'green' : 'white' "/></button>
-                        <i class="bicycle icon" v-on:click="bicycleIconClicked = !bicycleIconClicked"></i>
+                        <button id="bicycle-button" v-bind:class=" bicycling ? 'green' : 'white' "/></button>
+                        <i class="bicycle icon" @click="bicycleIconClicked"></i>
 
-                        <button id="subway-button" v-bind:class=" subwayIconClicked ? 'green' : 'white' "/></button>
-                        <i class="subway icon" v-on:click="subwayIconClicked = !subwayIconClicked"></i>
+                        <button id="subway-button" v-bind:class=" transit ? 'green' : 'white' "/></button>
+                        <i class="subway icon" @click="subwayIconClicked"></i>
 
-                        <button id="male-button" v-bind:class=" walkingIconClicked ? 'green' : 'white' "/></button>
-                        <i class="male icon" v-on:click="walkingIconClicked = !walkingIconClicked"></i>
+                        <button id="male-button" v-bind:class=" walking ? 'green' : 'white' "/></button>
+                        <i class="male icon" @click="walkingIconClicked"></i>
 
                         <button class="small ui button" id="calculate" @click="calculateOptimalItinerary">calculate</button>
                     </div>
@@ -99,10 +99,10 @@ export default{
         errorMessage: "",
         spinner: false,
         apiKey: "AIzaSyAdxXoKAF0KG0yAWKXRiKyOby9YfHUxOug",
-        carIconclicked: true,
-        bicycleIconClicked:false,
-        subwayIconClicked:false,
-        walkingIconClicked:false
+        driving: true,
+        bicycling:false,
+        transit:false,
+        walking:false
         }
     },
 
@@ -355,7 +355,38 @@ export default{
                 
                 }
             });
+        },
+
+        bicycleIconClicked(){
+            this.driving = false;
+            this.bicycling=true;
+            this.transit =false;
+            this.walking =false;
+        },
+
+       carIconClicked(){
+            this.driving = true;
+            this.bicycling=false;
+            this.transit =false;
+            this.walking =false;
+        },
+
+        subwayIconClicked(){
+            this.driving = false;
+            this.bicycling=false;
+            this.transit =true;
+            this.walking =false;
+        },
+
+        walkingIconClicked(){
+            this.driving = false;
+            this.bicycling=false;
+            this.transit =false;
+            this.walking =true;
         }
+
+
+
     },
 
     mounted(){
