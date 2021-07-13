@@ -6,26 +6,57 @@
                 <div class="ui segment">
                     <div class="field">
                         <div class = "ui right icon input large" :class="{loading:spinner}">
-                        <!-- <div class = "ui right icon input large"> -->
-                            <input type="text" placeholder="Add your destinations" v-model="address" ref="autocomplete">
-                            <!-- <div class="ui tiny active loader" v-show="spinner" id="loader1"></div>  -->
+                            <input type="text" placeholder="Enter address here" v-model="address" ref="autocomplete">
                             <i class="dot circle link icon"  id="dot-icon" @click="findCurrentLocation"></i>
                             
                         </div>
-                        <button class="medium ui button" id="add-button" @click="addNewDestination">Add</button>
+                        <button class="tiny ui button" id="add-origin" @click="addOrigin">add origin</button>
+                        <button class="tiny ui button" id="add-destination" @click="addDestination">add destination</button>
+                        <button class="tiny ui button" id="add-stop" @click="addNewStops(false,false)">add stops</button>
                         
                     </div>
                 </div>
-                <h1 v-show="destinationArray.length>0">Lists of stops:</h1>
+                <!-- <h1 v-show="origin.length>0">Origin:</h1>
+                    <div class="ui list" > 
+                        <div class="item" v-show="origin.length>0">
+                            <i class="map marker icon"></i>
+                        <div class="content">
+                        <h3 class="header" >{{origin[0]}} <span><i class="window close outline icon"></i></span></h3>
+                        </div>
+                        </div>
+                    </div> -->
+
+                <h3 v-for ="(place,index) in stopsArray" v-show="stopsArrayDetail[index].isOrigin">Origin:</h3>
                 <div class="ui list">
-                    <!-- <div class="item" v-for="place in destinationArray" v-bind:key="place"> -->
-                        <div class="item" v-for ="(place,index) in destinationArray">
+                        <div class="item" v-for ="(place,index) in stopsArray" v-show="stopsArrayDetail[index].isOrigin">
                         <i class="map marker icon"></i>
                         <div class="content">
-                        <h3 class="header">{{place}} <span><i class="window close outline icon" @click="removeThisLocation(index)"></i></span></h3>
+                        <h4 class="header" >{{place}} <span><i class="window close outline icon" @click="removeThisLocation(index)"></i></span></h4>
                         </div>
                     </div>
-                <form class="ui segment"  v-show="destinationArray.length>0" id="tranportation">
+                </div>
+
+                <h3 v-for ="(place,index) in stopsArray" v-show="stopsArrayDetail[index].isDestination">Destination:</h3>
+                <div class="ui list">
+                        <div class="item" v-for ="(place,index) in stopsArray" v-show="stopsArrayDetail[index].isDestination">
+                        <i class="map marker icon"></i>
+                        <div class="content">
+                        <h4 class="header" >{{place}} <span><i class="window close outline icon" @click="removeThisLocation(index)"></i></span></h4>
+                        </div>
+                    </div>
+                </div>
+
+
+                <h3 v-show="stopsArray.length - origin.length - destination.length>0">Lists of stops:</h3>
+                <div class="ui list">
+                    <!-- <div class="item" v-for="place in stopsArray" v-bind:key="place"> -->
+                        <div class="item" v-for ="(place,index) in stopsArray" v-show="!stopsArrayDetail[index].isOrigin && !stopsArrayDetail[index].isDestination">
+                        <i class="map marker icon"></i>
+                        <div class="content">
+                        <h4 class="header" >{{place}} <span><i class="window close outline icon" @click="removeThisLocation(index)"></i></span></h4>
+                        </div>
+                    </div>
+                <form class="ui segment"  v-show="stopsArray.length>0" id="tranportation">
                     <div id="trasnInside">
                         <button id="car-button" v-bind:class=" carIconclicked ? 'green' : 'white' "/></button>
                         <i class="car icon" v-on:click="carIconclicked = !carIconclicked"></i>
@@ -60,8 +91,10 @@ export default{
         address:"",
         lat:"",
         lng:"",
-        destinationArray:[],
-        destinationArrayDetail:[],
+        origin:[],
+        destination: [],
+        stopsArray:[],
+        stopsArrayDetail:[],
         allRoutes:[],
         errorMessage: "",
         spinner: false,
@@ -75,29 +108,63 @@ export default{
 
 
     methods:{
-        addNewDestination(){
+        addOrigin(){
+            if(this.origin.length==0){
+           this.addNewStops(true,false);
+                }
+           else{
+               this.errorMessage = "origin already exists, please remove it first before adding a new one"
+           }
+           console.log(this.stopsArrayDetail)
+            },
+
+
+        addDestination(){
+            if(this.destination.length==0){
+                this.addNewStops(false,true);
+            }
+           else{
+               this.errorMessage = "destination already exists, please remove it first before adding a new one"
+           }
+           console.log(this.stopsArrayDetail)
+
+        },
+        
+
+        addNewStops(isOrigin,isDestination){
             console.log("add location pressed");
             console.log(`this.address=${this.address}`);
-            console.log(`current locations = ${this.destinationArrayDetail}`)
+            console.log(`current locations = ${this.stopsArrayDetail}`)
             // console.log(`this.lat,this.lng=${this.latitude},${this.longitude}`);
             this.errorMessage = "";
            if (!this.address){
                 this.errorMessage = "Please input valid address";
             }
-            else if(!this.destinationArray){
+            else if(!this.stopsArray){
                 const locationDetail = {
                     address:this.address,
                     lat:this.lat,
-                    lng:this.lng
+                    lng:this.lng,
+                    isOrigin:isOrigin,
+                    isDestination:isDestination,
                     };
-                this.destinationArray.push(this.address);
-                this.destinationArrayDetail.push(locationDetail)
+                this.stopsArray.push(this.address);
+                this.stopsArrayDetail.push(locationDetail)
+                if (isOrigin){
+                    this.origin = [this.address];
+                    }
+                
+                if (isDestination){
+                    this.destination = [this.address];
+                }
+
+                
 
             }else{
                 
-                const index = this.destinationArray.indexOf(this.address);
+                const index = this.stopsArray.indexOf(this.address);
                 
-                // let index = this.destinationArray.findIndex(element => {
+                // let index = this.stopsArray.findIndex(element => {
                 // if (element.address === this.address) {
                 //     return true;
                 // }
@@ -109,33 +176,48 @@ export default{
                     const locationDetail = {
                         address:this.address,
                         lat:this.lat,
-                        lng:this.lng
+                        lng:this.lng,
+                        isOrigin:isOrigin,
+                        isDestination:isDestination,
                         };
-                        this.destinationArray.push(this.address);
-                        this.destinationArrayDetail.push(locationDetail)
+                        this.stopsArray.push(this.address);
+                        this.stopsArrayDetail.push(locationDetail)
+                        if (isOrigin){
+                            this.origin = [this.address];
+                            }
+                
+                        if (isDestination){
+                            this.destination = [this.address];
+                        }
                     }
             }
         
-            console.log(this.destinationArray);
+            
             this.renderAllStopsMarkers();
-
+        console.log(this.stopsArrayDetail);
         }
         ,
 
         renderAllStopsMarkers(){
             console.log("render all stops markder called");
             console.log("emit destination-array");
-            EventBus.$emit("destination-array",this.destinationArrayDetail);
+            EventBus.$emit("destination-array",this.stopsArrayDetail);
         },
 
 
         removeThisLocation(index){
             this.errorMessage = "";
             if (index > -1) {
-            this.destinationArray.splice(index, 1);
-            this.destinationArrayDetail.splice(index,1);
-            console.log(`after delete, current locations = ${this.destinationArrayDetail}`);
-            console.log(this.destinationArrayDetail);
+                if(this.stopsArrayDetail[index].isOrigin){
+                    this.origin = [];
+                }
+                if(this.stopsArrayDetail[index].isDestination){
+                    this.destination = [];
+                }
+                this.stopsArray.splice(index, 1);
+                this.stopsArrayDetail.splice(index,1);
+                console.log(`after delete, current locations = ${this.stopsArrayDetail}`);
+                console.log(this.stopsArrayDetail);
             }
             this.renderAllStopsMarkers();
         },
@@ -194,8 +276,8 @@ export default{
 
             let originsArray = [];
             let destinationsArray = [];
-            for(let i=0; i<this.destinationArrayDetail.length;i++){
-                var place = new google.maps.LatLng(this.destinationArrayDetail[i].lat, this.destinationArrayDetail[i].lng);
+            for(let i=0; i<this.stopsArrayDetail.length;i++){
+                var place = new google.maps.LatLng(this.stopsArrayDetail[i].lat, this.stopsArrayDetail[i].lng);
                 originsArray.push(place);
                 destinationsArray.push(place);
             }
@@ -213,7 +295,7 @@ export default{
                 avoidTolls: null,
             }, (response,status)=>{
                 if(status == "OK"){
-                    var routes = new Array(this.destinationArrayDetail.length);
+                    var routes = new Array(this.stopsArrayDetail.length);
                     for (var idx = 0; idx < routes.length; idx++) {
                         routes[idx] = new Array(routes.length);
                     }
@@ -235,8 +317,8 @@ export default{
 
                 
                             var route = {
-                                origin:{address:from,lat:this.destinationArrayDetail[i].lat, lng:this.destinationArrayDetail[i].lng},
-                                destination:{address:to,lat:this.destinationArrayDetail[j].lat, lng:this.destinationArrayDetail[j].lng}, 
+                                origin:{address:from,lat:this.stopsArrayDetail[i].lat, lng:this.stopsArrayDetail[i].lng},
+                                destination:{address:to,lat:this.stopsArrayDetail[j].lat, lng:this.stopsArrayDetail[j].lng}, 
                                 distance:distance,
                                 duration:duration,
                                 };
@@ -317,11 +399,12 @@ export default{
     left: 0px;
     top:0px
 } */
-#add-button{
+#add-stop,#add-origin,#add-destination{
     color: white;
     position: relative;
     top:10px;
-    left:330px;
+    left:0px;
+    margin: 9px;
     background-color: rgb(41, 165, 130);
 }
 

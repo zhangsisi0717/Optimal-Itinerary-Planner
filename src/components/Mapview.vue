@@ -98,9 +98,6 @@ export default {
         this.resetMap();
 
 
-        const directionsService = new google.maps.DirectionsService();
-        const directionsRenderer = new google.maps.DirectionsRenderer();
-
         //Render all the markders/infoWindow: receive data: destination-array when "Add" button clicked
         EventBus.$on("destination-array",(data)=>{
             if (data){
@@ -126,9 +123,10 @@ export default {
 
         //reveive data: route-data and render all the routes, after "calculate" clicked
         EventBus.$on("route-data",(data)=>{
-            console.log("received data")
-            console.log(`from= ${data.origin.address}`)
-            console.log(`to= ${data.destination.address}`)
+            // console.log("received data")
+            // console.log(`from= ${data.origin.address}`)
+            // console.log(`to= ${data.destination.address}`)
+            const directionsService = new google.maps.DirectionsService();
             directionsService.route({
                 origin: new google.maps.LatLng(data.origin.lat,data.origin.lng),
                 destination: new google.maps.LatLng(data.destination.lat,data.destination.lng),
@@ -136,11 +134,29 @@ export default {
             }, 
             (response,status)=>{
                 if(status === "OK"){
-                    console.log("route request status == OK");
-                    console.log("the response is:")
-                    console.log(response)
+                    this.resetMap()
+                   
+                    const directionsRenderer = new google.maps.DirectionsRenderer({
+                        suppressMarker: true
+                    });
+                    
+                    const originLabel = new google.maps.InfoWindow({
+                        content: `<i class="marker alternate icon"></i> ${data.origin.address}`,
+                        position: new google.maps.LatLng(data.origin.lat,data.origin.lng)
+                    })
+                    originLabel.open(this.map,null)
+
+                    const destinationLabel = new google.maps.InfoWindow({
+                        content: `<i class="marker alternate icon"></i> ${data.destination.address}`,
+                        position: new google.maps.LatLng(data.destination.lat,data.destination.lng),
+                    })
+                    destinationLabel.open(this.map,null)
+
+                    // console.log("route request status == OK");
+                    // console.log("the response is:")
+                    // console.log(response)
                     directionsRenderer.setDirections(response);
-                    directionsRenderer.setMap(map);
+                    directionsRenderer.setMap(this.map);
                 }
                 else{console.log(status)}
             })
@@ -154,6 +170,8 @@ export default {
 
 #map {
   position: absolute;
+  width:100%;
+  height:100%;
   left: 0;
   right: 0;
   top: 89px;
