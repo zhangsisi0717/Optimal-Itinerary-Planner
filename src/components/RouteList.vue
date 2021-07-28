@@ -61,7 +61,7 @@ export default {
         console.log("route list received data")
         this.calculatedRouteLists=[]
         if(data){
-          this.calculatedRouteLists = [data]
+          this.calculatedRouteLists = data
           console.log("this.calculatedRouteLists=")
           console.log(this.calculatedRouteLists)
         }

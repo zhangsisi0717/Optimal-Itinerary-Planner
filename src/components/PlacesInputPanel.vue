@@ -361,10 +361,12 @@ export default{
                 }
                 optimalRoutes.push(allRoutesData[idx][0]);
                 // 0->1->2->3
+                console.log("optimal routes = ")
                 console.log(optimalRoutes);
 
-                EventBus.$emit("route-data",allRoutesData[0][1]);
-                EventBus.$emit("route-data2",allRoutesData[0][1]);
+                // EventBus.$emit("route-data",allRoutesData[0][1]);
+                EventBus.$emit("route-data",optimalRoutes);
+                EventBus.$emit("route-data2",optimalRoutes);
                 
                 
                 }
