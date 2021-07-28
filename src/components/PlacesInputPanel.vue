@@ -364,6 +364,7 @@ export default{
                 console.log(optimalRoutes);
 
                 EventBus.$emit("route-data",allRoutesData[0][1]);
+                EventBus.$emit("route-data2",allRoutesData[0][1]);
                 
                 
                 }
