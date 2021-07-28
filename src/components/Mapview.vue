@@ -96,8 +96,6 @@ export default {
     mounted(){
 
         this.resetMap();
-
-
         //Render all the markders/infoWindow: receive data: destination-array when "Add" button clicked
         EventBus.$on("destination-array",(data)=>{
             if (data){
@@ -126,6 +124,10 @@ export default {
             // console.log("received data")
             // console.log(`from= ${data.origin.address}`)
             // console.log(`to= ${data.destination.address}`)
+            // for(let idx =0; idx<routes.length; idx++){
+            //     var data = routes[idx];
+            //     console.log(`data = ${data}`);
+            
             const directionsService = new google.maps.DirectionsService();
             directionsService.route({
                 origin: new google.maps.LatLng(data.origin.lat,data.origin.lng),
@@ -134,6 +136,7 @@ export default {
             }, 
             (response,status)=>{
                 if(status === "OK"){
+                    
                     this.resetMap()
                    
                     const directionsRenderer = new google.maps.DirectionsRenderer({
@@ -157,16 +160,19 @@ export default {
                     // console.log(response)
                     directionsRenderer.setDirections(response);
                     directionsRenderer.setMap(this.map);
+                    
                 }
                 else{console.log(status)}
             })
+            // }  
+
         });
 
     }
 }
 </script>
 
-<style>
+<style scoped>
 
 #map {
   position: absolute;

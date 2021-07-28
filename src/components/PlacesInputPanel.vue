@@ -70,7 +70,7 @@
                         <button id="male-button" v-bind:class=" walking ? 'green' : 'white' "/></button>
                         <i class="male icon" @click="walkingIconClicked"></i>
 
-                        <button class="small ui button" id="calculate" @click="calculateOptimalItinerary">calculate</button>
+                        <button class="small ui button" id="calculate" @click="calculateOptimalItinerary"><router-link :to="{ name: 'ResultMapview'}" style="text-decoration: none; color: inherit;">calculate</router-link></button>
                     </div>
                     
                 </form>
@@ -344,14 +344,27 @@ export default{
         },
 
         calculateOptimalItinerary(){
+            // this.$router.push({name:"ResultMapview"});
             this.requestRoutesInfo((allRoutesData)=>{
                 if(allRoutesData){
-                console.log("run here all routes")
+                console.log("run here all routes");
                 // console.log(`this.allroutes=${this.allRoutes}`);
                 console.log(`this.allroutes[0][0]=${allRoutesData[0][1]}`);
                 // console.log(this.allRoutes[0][0]);
-                console.log("emit route-data, this.routes[0][0]")
+                console.log("emit route-data, this.routes[0][0]");
+
+                const optimalRoutes = [];
+                var idx = 0;
+                while(idx < allRoutesData.length-1)  {
+                    optimalRoutes.push(allRoutesData[idx][idx+1]);
+                    idx +=1
+                }
+                optimalRoutes.push(allRoutesData[idx][0]);
+                // 0->1->2->3
+                console.log(optimalRoutes);
+
                 EventBus.$emit("route-data",allRoutesData[0][1]);
+                
                 
                 }
             });
@@ -464,9 +477,12 @@ export default{
     left: 100px;
     top: -5px;
     background-color: rgb(41, 165, 130);
-    color:white;
+    color: white;
     margin: -4px;
     
+}
+.active button{
+    color: inherit
 }
 
 #tranportation{

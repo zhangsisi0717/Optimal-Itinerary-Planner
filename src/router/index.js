@@ -7,6 +7,7 @@ import Mapview from '@/components/Mapview'
 import Main from '@/pages/Main'
 import LoginPage from '@/pages/LoginPage'
 import SignupPage from '@/pages/SignupPage'
+import ResultMapview from '@/pages/ResultMapview'
 
 Vue.use(Router)
 
@@ -31,6 +32,12 @@ export default new Router({
       path: '/signuppage',
       name: 'SignupPage',
       component: SignupPage
+    }
+    ,
+    {
+      path: '/resultmapview',
+      name: 'ResultMapview',
+      component: ResultMapview
     }
     
   ]
