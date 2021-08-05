@@ -33,65 +33,6 @@ export default {
         });
         }
     },
-        // showUserLocationOnTheMap(latitude, longitude,showMarker) {
-        // // Show & center the Map based oon
-        //     var map = new google.maps.Map(this.$refs["map"], {
-        //         zoom: 5,
-        //         center: new google.maps.LatLng(latitude, longitude),
-        //         mapTypeId: google.maps.MapTypeId.ROADMAP,
-        //     });
-
-        //     if (showMarker){
-        //         new google.maps.Marker({
-        //             position: new google.maps.LatLng(latitude, longitude),
-        //             draggable: true,
-        //             map: map,
-        //         });
-        //     }
-        //     },
-
-    //     showRouteOntheMap(){
-    //     /* ROUTE FOMAT
-    //         route = {
-    //         origin:{address:from,lat:this.destinationArrayDetail[i].lat, lng:this.destinationArrayDetail[i].lng},
-    //         destination:{address:to,lat:this.destinationArrayDetail[j].lat, lng:this.destinationArrayDetail[j].lng}, 
-    //         distance:distance,
-    //         duration:duration,
-    //         };*/
-    //         this.map = new google.maps.Map(this.$refs["map"], {
-    //             zoom: 15,
-    //             center: new google.maps.LatLng(this.lat, this.lng),
-    //             mapTypeId: google.maps.MapTypeId.ROADMAP,
-    //         });
-    //         console.log("created a new map");
-
-            
-    //         const directionsService = new google.maps.DirectionsService();
-    //         console.log("init a directionsService")
-    //         const directionsRenderer = new google.maps.DirectionsRenderer();
-    //         console.log("init a directionsRenderer")
-
-    //         EventBus.$on("route-data",(data)=>{
-    //             console.log("receive the route-data");
-    //             console.log(`data.origin = ${data.origin.address}`);
-    //             console.log(`data.des = ${data.destination.address}`);
-    //             directionsService.route({
-    //                 origin: data.origin.address,
-    //                 destination: data.destination.address,
-    //                 travelMode: 'DRIVING',
-    //             }, (response,status)=>{
-    //                 if(status === "OK"){
-    //                     console.log("route request status == OK");
-    //                     console.log("the response is:")
-    //                     console.log(response)
-    //                     directionsRenderer.setDirections(response);
-    //                     directionsRenderer.setMap(this.map);
-    //                 }
-    //                 else{console.log(status)}
-    //             })
-    //         })
-    //     }
-    
         
     mounted(){
 
@@ -174,43 +115,62 @@ export default {
                 else{console.log(status)}
             })
             });
-            // const directionsService = new google.maps.DirectionsService();
-            // directionsService.route({
-            //     origin: new google.maps.LatLng(data.origin.lat,data.origin.lng),
-            //     destination: new google.maps.LatLng(data.destination.lat,data.destination.lng),
-            //     travelMode: 'DRIVING',
-            // }, 
-            // (response,status)=>{
-            //     if(status === "OK"){
+
+
+        });
+
+
+
+
+        EventBus.$on("route-data-from-routeList",(routes)=>{
+            const directionsService = new google.maps.DirectionsService();
+            this.resetMap();
+            console.log("received routes =")
+            console.log(routes[0])
+            console.log(routes[1])
+            console.log(routes[2])
+
+            routes.forEach((data) => {
+                console.log("routes.for each data:");
+                console.log(data);
+                
+            directionsService.route({
+                origin: new google.maps.LatLng(data.origin.lat,data.origin.lng),
+                destination: new google.maps.LatLng(data.destination.lat,data.destination.lng),
+                travelMode: 'DRIVING',
+            }, 
+            (response,status)=>{
+                if(status === "OK"){
                     
-            //         this.resetMap()
+                    // this.resetMap()
                    
-            //         const directionsRenderer = new google.maps.DirectionsRenderer({
-            //             suppressMarker: true
-            //         });
+                    const directionsRenderer = new google.maps.DirectionsRenderer({
+                        suppressMarker: true
+                    });
                     
-            //         const originLabel = new google.maps.InfoWindow({
-            //             content: `<i class="marker alternate icon"></i> ${data.origin.address}`,
-            //             position: new google.maps.LatLng(data.origin.lat,data.origin.lng)
-            //         })
-            //         originLabel.open(this.map,null)
+                    const originLabel = new google.maps.InfoWindow({
+                        content: `<i class="marker alternate icon"></i> ${data.origin.address}`,
+                        position: new google.maps.LatLng(data.origin.lat,data.origin.lng)
+                    })
+                    originLabel.open(this.map,null)
 
-            //         const destinationLabel = new google.maps.InfoWindow({
-            //             content: `<i class="marker alternate icon"></i> ${data.destination.address}`,
-            //             position: new google.maps.LatLng(data.destination.lat,data.destination.lng),
-            //         })
-            //         destinationLabel.open(this.map,null)
+                    const destinationLabel = new google.maps.InfoWindow({
+                        content: `<i class="marker alternate icon"></i> ${data.destination.address}`,
+                        position: new google.maps.LatLng(data.destination.lat,data.destination.lng),
+                    })
+                    destinationLabel.open(this.map,null)
 
-            //         // console.log("route request status == OK");
-            //         // console.log("the response is:")
-            //         // console.log(response)
-            //         directionsRenderer.setDirections(response);
-            //         directionsRenderer.setMap(this.map);
+                    // console.log("route request status == OK");
+                    // console.log("the response is:")
+                    // console.log(response)
+                    directionsRenderer.setDirections(response);
+                    directionsRenderer.setMap(this.map);
                     
-            //     }
-            //     else{console.log(status)}
-            // })
-            // }  
+                }
+                else{console.log(status)}
+            })
+            });
+
 
         });
 
