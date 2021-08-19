@@ -13,7 +13,7 @@
             <a class= "ui item"><router-link :to="{ name: 'SignupPage'}">Signup</router-link></a>
             <a class= "ui item" ><router-link :to="{ name: 'LoginPage'}" v-if="!user">Login</router-link></a>
             <i class="user circle icon" id="user-circle-icon" v-if="user"></i>
-            <a class="ui item" v-if="user"><router-link :to="{ name: 'LoginPage'}">Logout</router-link></a>
+            <a class="ui item" @click="logout" v-if="user">Logout</a>
         </div>
     </div>
     
@@ -31,7 +31,15 @@ export default{
         }
     },
 
-    methods:{},
+    methods:{
+      logout(){
+        firebase.auth().signOut().then(()=>{
+          this.$router.push({
+            name:"LoginPage"
+          })
+        })
+      }
+    },
 
     created(){
           console.log("run created")

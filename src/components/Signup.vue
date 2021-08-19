@@ -45,8 +45,8 @@ export default{
                     remove: /[!@#$%^&*:]/g,
                     lower:true
                 })
-            console.log(this.slug)
-            let reference = db.collection("users").doc(this.slug)
+            // console.log(this.slug)
+            let reference = db.collection("users").doc(this.slug) 
             reference.get().then(doc => {
                 if (doc.exists){
                     this.message = "username already exists"
@@ -55,10 +55,12 @@ export default{
                         console.log(cred.user)
                         reference.set({
                             username: this.username,
-                            geolocation: null,
+                            // geolocation: null,
                             calculatedItinerary: null,
+                            calculatedItineraryHistory:[],
                             UID: cred.user.uid,
-                            loginHistory:[]
+                            // loginHistory:[],
+
 
                         })
                     }).then(()=>{
@@ -71,7 +73,7 @@ export default{
                 }
             })
             }else{
-                this.message = "please enter all fields"
+                this.message = "please fill out all fields"
             }
         }
     }
