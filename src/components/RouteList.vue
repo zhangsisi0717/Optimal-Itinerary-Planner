@@ -3,9 +3,10 @@
         <h1>Optimal Routes List:</h1>
         <section class="ui three column grid" id="input-panel">
           <form class="ui segment large form">
-          <!-- <div class="ui list"> -->
           <h2>Results:</h2>
           <button @click="showAllRoutesOnMap">show all routes</button>
+          <i class="save outline icon" v-show="!curRoutesSaved && user" @click="saveCurrentRoutes"></i>
+          <i class="save icon" v-show="curRoutesSaved"></i>
           <div class="item" v-for ="route in calculatedRouteLists" @click="showThisRouteOnMap(route)">
             <div> 
               <i class="marker alternate icon"></i>
@@ -18,7 +19,6 @@
             <div class="ui label small">{{route.distance.text}}</div>
             <div class="ui label small">{{route.duration.text}}</div>
         </div>
-        <!-- </div> -->
         </form>
       </section>
     </div>
@@ -26,15 +26,21 @@
 
 <script>
 import {EventBus} from "@/EventBus"
+import firebase from "firebase"
+import db from "@/firebase/init"
 
 export default {
     name: 'RouteList',
     // components:{NaviBar,PlacesInputPanel,Mapview}
-    components:{},
+    components:{
+    },
 
     data(){
       return {
+        test:null,
+        user: null,
         calculatedRouteLists:[],
+        curRoutesSaved:false
         // allCalculatedRouteLists:[]
       }
       },
@@ -47,8 +53,40 @@ export default {
 
       showAllRoutesOnMap(){
         EventBus.$emit("route-data-from-routeList",this.calculatedRouteLists);
+      },
+
+      saveCurrentRoutes(){
+        console.log("save routes")
+        this.curRoutesSaved = true;
+        console.log(this.curRoutesSaved);
+
+
+        db.collection('users').where('UID','==',this.user.uid).get().then(snapshot=>{
+            console.log("snap shot")
+            console.log(snapshot)
+            snapshot.forEach((doc)=>{
+
+              console.log("doc=")
+              console.log(doc.data().calculatedItineraryHistory)
+              let routesHistory = doc.data().calculatedItineraryHistory
+              let newRoutes = {"routes":this.calculatedRouteLists}
+              console.log("new route=")
+              console.log(newRoutes)
+              routesHistory.push(newRoutes)
+              // routesHistory.push(this.calculatedRouteLists)
+              db.collection('users').doc(doc.id).update({
+                calculatedItineraryHistory: routesHistory
+              })
+
+            })
+
+        })
       }
     },
+
+    created(){
+          this.user = firebase.auth().currentUser;
+          },
 
     mounted(){
       EventBus.$on("route-data2",(data)=>{
@@ -58,8 +96,8 @@ export default {
         if(data){
           this.calculatedRouteLists = data
           this.allCalculatedRouteLists = data
-          console.log("this.calculatedRouteLists=")
-          console.log(this.calculatedRouteLists)
+          // console.log("this.calculatedRouteLists=")
+          // console.log(this.calculatedRouteLists)
         }
 
       });

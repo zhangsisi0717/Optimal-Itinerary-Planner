@@ -57,7 +57,7 @@ export default{
                             username: this.username,
                             // geolocation: null,
                             calculatedItinerary: null,
-                            calculatedItineraryHistory:[],
+                            calculatedItineraryHistory: [],
                             UID: cred.user.uid,
                             // loginHistory:[],
 

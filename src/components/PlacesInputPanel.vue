@@ -71,6 +71,8 @@
                         <i class="male icon" @click="walkingIconClicked"></i>
 
                         <button class="small ui button" id="calculate" @click="calculateOptimalItinerary"><router-link :to="{ name: 'ResultMapview'}" style="text-decoration: none; color: inherit;">calculate</router-link></button>
+                        <!-- <button class="small ui button" id="calculate" @click="calculateOptimalItinerary">calculate</button> -->
+
                     </div>
                     
                 </form>
@@ -364,10 +366,14 @@ export default{
                 console.log("optimal routes = ")
                 console.log(optimalRoutes);
 
+                
+                // this.$router.push({name:"ResultMapview"});
+
                 // EventBus.$emit("route-data",allRoutesData[0][1]);
                 EventBus.$emit("route-data",optimalRoutes);
                 EventBus.$emit("route-data2",optimalRoutes);
                 
+                // this.$router.push({name:"ResultMapview"});
                 
                 }
             });
