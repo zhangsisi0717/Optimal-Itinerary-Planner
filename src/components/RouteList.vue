@@ -85,11 +85,8 @@ export default {
     },
 
     created(){
-          this.user = firebase.auth().currentUser;
-          },
-
-    mounted(){
-      EventBus.$on("route-data2",(data)=>{
+        this.user = firebase.auth().currentUser;
+        EventBus.$on("route-data",(data)=>{
         console.log("route list received data")
         this.calculatedRouteLists=[]
         // this.allCalculatedRouteLists=[]
@@ -101,6 +98,21 @@ export default {
         }
 
       });
+          },
+
+    mounted(){
+      // EventBus.$on("route-data2",(data)=>{
+      //   console.log("route list received data")
+      //   this.calculatedRouteLists=[]
+      //   // this.allCalculatedRouteLists=[]
+      //   if(data){
+      //     this.calculatedRouteLists = data
+      //     this.allCalculatedRouteLists = data
+      //     // console.log("this.calculatedRouteLists=")
+      //     // console.log(this.calculatedRouteLists)
+      //   }
+
+      // });
     }
   }
 

@@ -371,7 +371,7 @@ export default{
 
                 // EventBus.$emit("route-data",allRoutesData[0][1]);
                 EventBus.$emit("route-data",optimalRoutes);
-                EventBus.$emit("route-data2",optimalRoutes);
+                // EventBus.$emit("route-data2",optimalRoutes);
                 
                 // this.$router.push({name:"ResultMapview"});
                 
