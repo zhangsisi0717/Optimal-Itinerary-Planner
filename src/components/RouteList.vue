@@ -86,11 +86,14 @@ export default {
 
     created(){
         this.user = firebase.auth().currentUser;
+        
         EventBus.$on("route-data",(data)=>{
         console.log("route list received data")
         this.calculatedRouteLists=[]
         // this.allCalculatedRouteLists=[]
         if(data){
+          console.log("route list received data=")
+          console.log(data)
           this.calculatedRouteLists = data
           this.allCalculatedRouteLists = data
           // console.log("this.calculatedRouteLists=")
@@ -98,6 +101,24 @@ export default {
         }
 
       });
+
+
+        EventBus.$on("route-data-to-routelist",(data)=>{
+        console.log("route list received data")
+        this.calculatedRouteLists=[]
+        // this.allCalculatedRouteLists=[]
+        if(data){
+          console.log("route list received data=")
+          console.log(data)
+          this.calculatedRouteLists = data
+          this.allCalculatedRouteLists = data
+          // console.log("this.calculatedRouteLists=")
+          // console.log(this.calculatedRouteLists)
+        }
+
+      });
+
+
           },
 
     mounted(){

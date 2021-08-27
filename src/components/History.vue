@@ -3,9 +3,14 @@
         <h1>Saved Itinerary</h1>
         <!-- <section class="ui two column grid" id="input-panel"> -->
             <form class="ui segment large form">
-                <div class="item" v-for ="(route, index) in routesHistory" id="saved-routes">
+                <div class="item" v-for ="(route, index) in routesHistory" id="saved-routes" @click="renderThisItinerary(route)">
+                    <!-- <button><router-link :to="{ name: 'ResultMapview'}" style="text-decoration: none; color: inherit;">click</router-link></button> -->
+                     <!-- <router-link :to="{ name: 'ResultMapview'}" style="text-decoration: none; color: inherit;"></router-link> -->
+                   
                     <div>
-                        <h3>No. {{index+1}}</h3>
+                        <h3>No. {{index+1}}
+                        <button id="detail"><router-link :to="{ name: 'ResultMapview'}" style="text-decoration: none; color: inherit;">show detail</router-link></button>
+                        </h3>
                         <i class="marker alternate icon"></i>
                         Origin: {{route.routes[1].origin.address}}
                     </div>
@@ -21,6 +26,7 @@
 <script>
 import firebase from "firebase"
 import db from "@/firebase/init"
+import {EventBus} from "@/EventBus"
 
 export default {
     name: "History",
@@ -45,6 +51,17 @@ export default {
 
         })
       },
+
+    methods:{
+        renderThisItinerary(route){
+            console.log(route.routes);
+            EventBus.$emit("route-data-to-routelist",route.routes);
+            EventBus.$emit("route-data-to-mapview",route.routes);
+            // EventBus.$emit("route-data",route.routes);
+            // this.$router.push({name:'ResultMapview'});
+
+        }
+    },
     }
 
 
@@ -53,9 +70,12 @@ export default {
 <style scoped>
 .item{
   margin: 10px;
-  cursor: pointer;
+  /* cursor: pointer; */
 }
 
+#detail{
+    font-size:small;
+}
 .item:hover {
   background-color: rgba(0, 0, 0, 0.1);
 }
