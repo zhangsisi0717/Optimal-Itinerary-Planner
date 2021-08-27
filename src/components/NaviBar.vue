@@ -6,8 +6,9 @@
     <div class="ui secondary menu" id="menu">
         <i class="home icon"></i>
         <a class="ui item"><router-link :to="{ name: 'Main'}"> Home</router-link></a>
-        <i class="history icon" v-show="user"></i>
-        <a class="ui item" v-show="user" id="history"><router-link :to="{ name: 'HistoryPage'}">History</router-link></a>
+        <i class="heart icon" v-show="user"></i>
+        <!-- <i class="history icon" v-show="user"></i> -->
+        <a class="ui item" v-show="user" id="history"><router-link :to="{ name: 'HistoryPage'}">Saved</router-link></a>
         <div class="right menu">
             <i class="user plus icon" id="user-plus"></i>
             <a class= "ui item"><router-link :to="{ name: 'SignupPage'}">Signup</router-link></a>
@@ -84,7 +85,7 @@ export default{
     left: 10px;
     color: white;
 }
-.history.icon{
+.heart.icon{
     position: relative;
     top: 13px;
     left: 15px;
