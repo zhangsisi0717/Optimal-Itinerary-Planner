@@ -7,7 +7,7 @@
         <i class="home icon"></i>
         <a class="ui item"><router-link :to="{ name: 'Main'}"> Home</router-link></a>
         <i class="history icon" v-show="user"></i>
-        <a class="ui item" v-show="user" id="history">History</a>
+        <a class="ui item" v-show="user" id="history"><router-link :to="{ name: 'HistoryPage'}">History</router-link></a>
         <div class="right menu">
             <i class="user plus icon" id="user-plus"></i>
             <a class= "ui item"><router-link :to="{ name: 'SignupPage'}">Signup</router-link></a>
