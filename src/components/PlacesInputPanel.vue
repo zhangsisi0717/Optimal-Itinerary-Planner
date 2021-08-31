@@ -16,15 +16,6 @@
                         
                     </div>
                 </div>
-                <!-- <h1 v-show="origin.length>0">Origin:</h1>
-                    <div class="ui list" > 
-                        <div class="item" v-show="origin.length>0">
-                            <i class="map marker icon"></i>
-                        <div class="content">
-                        <h3 class="header" >{{origin[0]}} <span><i class="window close outline icon"></i></span></h3>
-                        </div>
-                        </div>
-                    </div> -->
 
                 <h3 v-for ="(place,index) in stopsArray" v-show="stopsArrayDetail[index].isOrigin">Origin:</h3>
                 <div class="ui list">
@@ -134,10 +125,7 @@ export default{
         
 
         addNewStops(isOrigin,isDestination){
-            console.log("add location pressed");
-            console.log(`this.address=${this.address}`);
-            console.log(`current locations = ${this.stopsArrayDetail}`)
-            // console.log(`this.lat,this.lng=${this.latitude},${this.longitude}`);
+            
             this.errorMessage = "";
            if (!this.address){
                 this.errorMessage = "Please input valid address";
@@ -165,14 +153,18 @@ export default{
             }else{
                 
                 const index = this.stopsArray.indexOf(this.address);
-                
-                // let index = this.stopsArray.findIndex(element => {
-                // if (element.address === this.address) {
-                //     return true;
-                // }
-                // });
-                if (index > -1) {
-                    this.errorMessage = "Address already exists";
+
+                if (index>-1 && this.address != this.origin[0] && this.address != this.destination[0]) {
+                    this.errorMessage = "duplicate stops/stops can not be the same with origin/destination";
+                }
+                else if (index>-1 && isOrigin && this.address == this.origin[0]){
+                    this.errorMessage = "duplicate origin";
+                }
+                else if (index>-1 && isDestination && this.address == this.destination[0]){
+                    this.errorMessage = "duplicate destination";
+                }
+                else if(index>-1 && !isOrigin && !isDestination && (this.address==this.origin[0] || this.address==this.destination[0])){
+                    this.errorMessage = "stops can not be the same with origin/destination"
                 }
                 else{
                     const locationDetail = {
