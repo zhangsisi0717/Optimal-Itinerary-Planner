@@ -22,6 +22,7 @@ export default {
             map:null,
             lat:39.8283,
             lng:-98.5795,
+            travelMode:null,
             // showPlacesInputPanel:true
         }
         },
@@ -64,8 +65,10 @@ export default {
         //reveive data: route-data and render all the routes, after "calculate" clicked
         EventBus.$on("route-data",(routes)=>{
             if(routes){
-            console.log("mapView received data ========")
-            console.log(routes)
+            this.travelMode = routes[0];
+            console.log(this.travelMode);
+            // console.log("mapView received data ========")
+            // console.log(routes)
             // console.log(`from= ${data.origin.address}`)
             // console.log(`to= ${data.destination.address}`)
             // for(let idx =0; idx<routes.length; idx++){
@@ -79,7 +82,7 @@ export default {
             // console.log(routes[1])
             // console.log(routes[2])
 
-            routes.forEach((data) => {
+            routes[1].forEach((data) => {
                 console.log("routes. for each = ")
                 console.log(data)
                 // console.log("routes.for each data:");
@@ -88,7 +91,7 @@ export default {
             directionsService.route({
                 origin: new google.maps.LatLng(data.origin.lat,data.origin.lng),
                 destination: new google.maps.LatLng(data.destination.lat,data.destination.lng),
-                travelMode: 'DRIVING',
+                travelMode: this.travelMode,
             }, 
             (response,status)=>{
                 if(status === "OK"){
@@ -135,6 +138,7 @@ export default {
             // for(let idx =0; idx<routes.length; idx++){
             //     var data = routes[idx];
             //     console.log(`data = ${data}`);
+            this.travelMode = routes.travelMode
             const directionsService = new google.maps.DirectionsService();
             console.log("after create directionsService ")
             this.resetMap();
@@ -144,7 +148,7 @@ export default {
             // console.log(routes[1])
             // console.log(routes[2])
 
-            routes.forEach((data) => {
+            routes.routes.forEach((data) => {
                 console.log("routes. for each = ")
                 console.log(data)
                 // console.log("routes.for each data:");
@@ -153,7 +157,7 @@ export default {
             directionsService.route({
                 origin: new google.maps.LatLng(data.origin.lat,data.origin.lng),
                 destination: new google.maps.LatLng(data.destination.lat,data.destination.lng),
-                travelMode: 'DRIVING',
+                travelMode: this.travelMode,
             }, 
             (response,status)=>{
                 if(status === "OK"){
@@ -196,21 +200,22 @@ export default {
 
 
         EventBus.$on("route-data-from-routeList",(routes)=>{
+            this.travelMode = routes.travelMode;
             const directionsService = new google.maps.DirectionsService();
             this.resetMap();
-            console.log("received routes =")
-            console.log(routes[0])
-            console.log(routes[1])
-            console.log(routes[2])
+            // console.log("received routes =")
+            // console.log(routes[0])
+            // console.log(routes[1])
+            // console.log(routes[2])
 
-            routes.forEach((data) => {
+            routes.routes.forEach((data) => {
                 console.log("routes.for each data:");
                 console.log(data);
                 
             directionsService.route({
                 origin: new google.maps.LatLng(data.origin.lat,data.origin.lng),
                 destination: new google.maps.LatLng(data.destination.lat,data.destination.lng),
-                travelMode: 'DRIVING',
+                travelMode: this.travelMode,
             }, 
             (response,status)=>{
                 if(status === "OK"){

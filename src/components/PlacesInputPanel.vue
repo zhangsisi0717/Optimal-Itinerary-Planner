@@ -95,7 +95,8 @@ export default{
         driving: true,
         bicycling:false,
         transit:false,
-        walking:false
+        walking:false,
+        travelMode:"DRIVING",
         }
     },
 
@@ -358,14 +359,9 @@ export default{
                 console.log("optimal routes = ")
                 console.log(optimalRoutes);
 
-                
-                // this.$router.push({name:"ResultMapview"});
-
-                // EventBus.$emit("route-data",allRoutesData[0][1]);
-                EventBus.$emit("route-data",optimalRoutes);
-                // EventBus.$emit("route-data2",optimalRoutes);
-                
-                // this.$router.push({name:"ResultMapview"});
+                let optimalRoutesAndTravelMode = [this.travelMode,optimalRoutes];
+                EventBus.$emit("route-data",optimalRoutesAndTravelMode);
+               
                 
                 }
             });
@@ -376,6 +372,7 @@ export default{
             this.bicycling=true;
             this.transit =false;
             this.walking =false;
+            this.travelMode = "BICYCLING";
         },
 
        carIconClicked(){
@@ -390,6 +387,7 @@ export default{
             this.bicycling=false;
             this.transit =true;
             this.walking =false;
+            this.travelMode = "TRANSIT";
         },
 
         walkingIconClicked(){
@@ -397,6 +395,7 @@ export default{
             this.bicycling=false;
             this.transit =false;
             this.walking =true;
+            this.travelMode="WALKING";
         }
 
 

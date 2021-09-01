@@ -9,15 +9,20 @@
                    
                     <div>
                         <h3>No. {{index+1}}
-                        <button id="detail"><router-link :to="{ name: 'ResultMapview'}" style="text-decoration: none; color: inherit;">show detail</router-link></button>
+                        <button id="detail"><router-link :to="{ name: 'ResultMapview'}" style="text-decoration: none; color: inherit;">view detail</router-link></button>
                         </h3>
                         <i class="marker alternate icon"></i>
-                        Origin: {{route.routes[1].origin.address}}
+                        Origin: {{route.routes[0].origin.address}}
                     </div>
                     <div>
                         <i class="flag checkered icon"></i>
-                        Destination: {{route.routes[2].origin.address}}
+                        Destination: {{route.routes[1].origin.address}}
                     </div>
+                    <div>
+                        <i class="smile outline icon"></i>
+                        TravelMode: {{route.travelMode}}
+                    </div>
+            
                 </div> 
             </form>
         <!-- </section> -->
@@ -55,8 +60,11 @@ export default {
     methods:{
         renderThisItinerary(route){
             console.log(route.routes);
-            EventBus.$emit("route-data-to-routelist",route.routes);
-            EventBus.$emit("route-data-to-mapview",route.routes);
+            // EventBus.$emit("route-data-to-routelist",route.routes);
+            // EventBus.$emit("route-data-to-mapview",route.routes);
+
+            EventBus.$emit("route-data-to-routelist",route);
+            EventBus.$emit("route-data-to-mapview",route);
             // EventBus.$emit("route-data",route.routes);
             // this.$router.push({name:'ResultMapview'});
 
