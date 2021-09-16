@@ -89,6 +89,7 @@ export default{
         stopsArray:[],
         stopsArrayDetail:[],
         allRoutes:[],
+        distanceMatrix:null,
         errorMessage: "",
         spinner: false,
         apiKey: "AIzaSyAdxXoKAF0KG0yAWKXRiKyOby9YfHUxOug",
@@ -97,6 +98,7 @@ export default{
         transit:false,
         walking:false,
         travelMode:"DRIVING",
+
         }
     },
 
@@ -221,8 +223,8 @@ export default{
         findCurrentLocation(){
             this.spinner = true;
             this.errorMessage="";
-            console.log("locator start!");
-            console.log(this.spinner)
+            // console.log("locator start!");
+            // console.log(this.spinner)
             if(navigator.geolocation){ //check if user's browser support this Geolocation api
              navigator.geolocation.getCurrentPosition(pos=>{
                  this.lat = pos.coords.latitude;
@@ -282,7 +284,7 @@ export default{
             {
                 origins: originsArray,
                 destinations: destinationsArray,
-                travelMode: 'DRIVING',
+                travelMode: this.travelMode,
                 transitOptions: null,
                 drivingOptions: null,
                 unitSystem: null,
@@ -338,15 +340,65 @@ export default{
             
         },
 
+        generateDistanceMatrix(allRoutesData){
+            console.log("start generate distance matrix");
+            let origin_idx = null;
+            let destination_idx = null;
+            let stops_idx = []
+            let distanceMatrix = []
+            for (var i=0; i<this.stopsArrayDetail.length;i++){
+                if(this.stopsArrayDetail[i].isOrigin){
+                    console.log("found origin");
+                    origin_idx=i;
+                }
+                else if(this.stopsArrayDetail[i].isDestination){
+                    console.log("found destination");
+                    destination_idx=i;
+                }
+                else{
+                    stops_idx.push(i);
+                }
+            };
+            // console.log(`origin idx=${origin_idx}, des_idx=${destination_idx}, stops=${stops_idx}`);
+            // console.log(`origin =${this.stopsArrayDetail[origin_idx]}`);
+            // console.log(`des=${this.stopsArrayDetail[destination_idx]}`);
+            for(var r=0; r<this.stopsArrayDetail.length-1;r++){
+                let temp_row = [];
+                if(r===0){
+                    temp_row.push(allRoutesData[origin_idx][origin_idx]);
+                    for(var j=0;j<stops_idx.length;j++){
+                        temp_row.push(allRoutesData[origin_idx][stops_idx[j]]);
+                    }
+                }
+                else{
+                    temp_row.push(allRoutesData[stops_idx[r-1]][destination_idx]);
+                    for(var j=0;j<stops_idx.length;j++){
+                        temp_row.push(allRoutesData[stops_idx[r-1]][stops_idx[j]])
+                    }
+
+                }
+                distanceMatrix.push(temp_row);
+                }
+            // console.log("distance_matrix=");
+            // console.log(distanceMatrix);
+            return distanceMatrix
+        },
+
         calculateOptimalItinerary(){
             // this.$router.push({name:"ResultMapview"});
             this.requestRoutesInfo((allRoutesData)=>{
                 if(allRoutesData){
-                console.log("run here all routes");
+                console.log("run here all routes,allRoutesData=");
+                console.log(allRoutesData);
+
+                console.log("all stops detail:");
+                console.log(this.stopsArrayDetail);
                 // console.log(`this.allroutes=${this.allRoutes}`);
-                console.log(`this.allroutes[0][0]=${allRoutesData[0][1]}`);
+                // console.log(`this.allroutes[0][0]=${allRoutesData[0][1]}`);
                 // console.log(this.allRoutes[0][0]);
-                console.log("emit route-data, this.routes[0][0]");
+                // console.log("emit route-data, this.routes[0][0]");
+
+                this.distanceMatrix = this.generateDistanceMatrix(allRoutesData);
 
                 const optimalRoutes = [];
                 var idx = 0;
