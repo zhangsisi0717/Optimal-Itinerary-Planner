@@ -1,20 +1,17 @@
 <template>
     <div>
         <section id="map" ref="map"></section>
-        <!-- <PlacesInputPanel v-show="showPlacesInputPanel" id="places-input-panel"/> -->
-        
     </div>
 </template>
 
 <script>
 import {EventBus} from "@/EventBus"
 import NaviBar from "@/components/NaviBar"
-// import PlacesInputPanel from "@/components/PlacesInputPanel"
+
 
 
 export default {
     name: "Mapview",
-    // components:{NaviBar,PlacesInputPanel},
     components:{NaviBar},
     
     data(){
@@ -23,7 +20,6 @@ export default {
             lat:39.8283,
             lng:-98.5795,
             travelMode:null,
-            // showPlacesInputPanel:true
         }
         },
     methods:{
@@ -39,13 +35,11 @@ export default {
     mounted(){
 
         this.resetMap();
-        //Render all the markders/infoWindow: receive data: destination-array when "Add" button clicked
         EventBus.$on("destination-array",(data)=>{
             if (data){
                 this.resetMap();
                 console.log("data received");
                 for (var idx=0;idx<data.length; idx++){
-                    // console.log(`place.address = ${data[idx].address}`)
                     console.log(`place.lat,lng = ${data[idx].address}, ${data[idx].lat},${data[idx].lng}`)
                     new google.maps.Marker({
                         position: new google.maps.LatLng(data[idx].lat, data[idx].lng),
@@ -66,28 +60,10 @@ export default {
         EventBus.$on("route-data",(routes)=>{
             if(routes){
             this.travelMode = routes[0];
-            console.log(this.travelMode);
-            // console.log("mapView received data ========")
-            // console.log(routes)
-            // console.log(`from= ${data.origin.address}`)
-            // console.log(`to= ${data.destination.address}`)
-            // for(let idx =0; idx<routes.length; idx++){
-            //     var data = routes[idx];
-            //     console.log(`data = ${data}`);
             const directionsService = new google.maps.DirectionsService();
             this.resetMap();
-            console.log("after reset map")
-            // console.log("received routes =")
-            // console.log(routes[0])
-            // console.log(routes[1])
-            // console.log(routes[2])
-
             routes[1].forEach((data) => {
-                console.log("routes. for each = ")
-                console.log(data)
-                // console.log("routes.for each data:");
-                // console.log(data);
-                
+              
             directionsService.route({
                 origin: new google.maps.LatLng(data.origin.lat,data.origin.lng),
                 destination: new google.maps.LatLng(data.destination.lat,data.destination.lng),
@@ -95,9 +71,6 @@ export default {
             }, 
             (response,status)=>{
                 if(status === "OK"){
-                    console.log("map view status === OK");
-                    // this.resetMap()
-                   
                     const directionsRenderer = new google.maps.DirectionsRenderer({
                         suppressMarker: true
                     });
@@ -113,10 +86,6 @@ export default {
                         position: new google.maps.LatLng(data.destination.lat,data.destination.lng),
                     })
                     destinationLabel.open(this.map,null)
-
-                    // console.log("route request status == OK");
-                    // console.log("the response is:")
-                    // console.log(response)
                     directionsRenderer.setDirections(response);
                     directionsRenderer.setMap(this.map);
                     
@@ -131,39 +100,18 @@ export default {
 
         //reveive data: route-data and render all the routes, after "calculate" clicked
         EventBus.$on("route-data-to-mapview",(routes)=>{
-            console.log("route-data-to-mapView received data ========")
-            console.log(routes)
-            // console.log(`from= ${data.origin.address}`)
-            // console.log(`to= ${data.destination.address}`)
-            // for(let idx =0; idx<routes.length; idx++){
-            //     var data = routes[idx];
-            //     console.log(`data = ${data}`);
             this.travelMode = routes.travelMode
             const directionsService = new google.maps.DirectionsService();
-            console.log("after create directionsService ")
             this.resetMap();
-            console.log("after reset map")
-            // console.log("received routes =")
-            // console.log(routes[0])
-            // console.log(routes[1])
-            // console.log(routes[2])
 
             routes.routes.forEach((data) => {
-                console.log("routes. for each = ")
-                console.log(data)
-                // console.log("routes.for each data:");
-                // console.log(data);
-                
             directionsService.route({
                 origin: new google.maps.LatLng(data.origin.lat,data.origin.lng),
                 destination: new google.maps.LatLng(data.destination.lat,data.destination.lng),
                 travelMode: this.travelMode,
             }, 
             (response,status)=>{
-                if(status === "OK"){
-                    console.log("map view status === OK");
-                    // this.resetMap()
-                   
+                if(status === "OK"){                  
                     const directionsRenderer = new google.maps.DirectionsRenderer({
                         suppressMarker: true
                     });
@@ -179,10 +127,6 @@ export default {
                         position: new google.maps.LatLng(data.destination.lat,data.destination.lng),
                     })
                     destinationLabel.open(this.map,null)
-
-                    // console.log("route request status == OK");
-                    // console.log("the response is:")
-                    // console.log(response)
                     directionsRenderer.setDirections(response);
                     directionsRenderer.setMap(this.map);
                     

@@ -56,7 +56,7 @@ export default{
                         reference.set({
                             username: this.username,
                             // geolocation: null,
-                            calculatedItinerary: null,
+                            calculatedItinerary: [],
                             calculatedItineraryHistory: [],
                             UID: cred.user.uid,
                             // loginHistory:[],

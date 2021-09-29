@@ -4,7 +4,7 @@
         <section class="ui three column grid" id="input-panel">
           <form class="ui segment large form">
           <h2>Results({{this.travelMode}}):</h2>
-          <button @click="showAllRoutesOnMap">show all routes</button>
+          <button @click.prevent="showAllRoutesOnMap">show all routes</button>
           <i class="save outline icon" v-show="!curRoutesSaved && user" @click="saveCurrentRoutes"></i>
           <i class="save icon" v-show="curRoutesSaved"></i>
           <div class="item" v-for ="route in calculatedRouteLists" @click="showThisRouteOnMap(route)">
@@ -67,18 +67,19 @@ export default {
             console.log("snap shot")
             console.log(snapshot)
             snapshot.forEach((doc)=>{
-
               console.log("doc=")
+              console.log(doc.data())
               console.log(doc.data().calculatedItineraryHistory)
-              let routesHistory = doc.data().calculatedItineraryHistory
+              let routesHistory = null;
+              routesHistory = doc.data().calculatedItineraryHistory
               let newRoutes = {"routes":this.calculatedRouteLists,"travelMode":this.travelMode}
               console.log("new route=")
               console.log(newRoutes)
               routesHistory.push(newRoutes)
-              // routesHistory.push(this.calculatedRouteLists)
+              console.log("new routes history====")
+              console.log(routesHistory)
               db.collection('users').doc(doc.id).update({
                 calculatedItineraryHistory: routesHistory
-
               })
 
             })

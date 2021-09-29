@@ -7,12 +7,12 @@
                     <div class="field">
                         <div class = "ui right icon input large" :class="{loading:spinner}">
                             <input type="text" placeholder="Enter address here" v-model="address" ref="autocomplete">
-                            <i class="dot circle link icon"  id="dot-icon" @click="findCurrentLocation"></i>
+                            <i class="dot circle link icon"  id="dot-icon" @click.prevent="findCurrentLocation"></i>
                             
                         </div>
-                        <button class="tiny ui button" id="add-origin" @click="addOrigin">add origin</button>
-                        <button class="tiny ui button" id="add-destination" @click="addDestination">add destination</button>
-                        <button class="tiny ui button" id="add-stop" @click="addNewStops(false,false)">add stops</button>
+                        <button class="tiny ui button" id="add-origin" @click.prevent="addOrigin">add origin</button>
+                        <button class="tiny ui button" id="add-destination" @click.prevent="addDestination">add destination</button>
+                        <button class="tiny ui button" id="add-stop" @click.prevent="addNewStops(false,false)">add stops</button>
                         
                     </div>
                 </div>
@@ -50,16 +50,16 @@
                 <form class="ui segment"  v-show="stopsArray.length>0" id="tranportation">
                     <div id="trasnInside">
                         <button id="car-button" v-bind:class=" driving ? 'green' : 'white' "/></button>
-                        <i class="car icon" @click="carIconClicked"></i>
+                        <i class="car icon" @click.prevent="carIconClicked"></i>
 
                         <button id="bicycle-button" v-bind:class=" bicycling ? 'green' : 'white' "/></button>
-                        <i class="bicycle icon" @click="bicycleIconClicked"></i>
+                        <i class="bicycle icon" @click.prevent="bicycleIconClicked"></i>
 
                         <button id="subway-button" v-bind:class=" transit ? 'green' : 'white' "/></button>
-                        <i class="subway icon" @click="subwayIconClicked"></i>
+                        <i class="subway icon" @click.prevent="subwayIconClicked"></i>
 
                         <button id="male-button" v-bind:class=" walking ? 'green' : 'white' "/></button>
-                        <i class="male icon" @click="walkingIconClicked"></i>
+                        <i class="male icon" @click.prevent="walkingIconClicked"></i>
 
                         <button class="small ui button" id="calculate" @click="calculateOptimalItinerary"><router-link :to="{ name: 'ResultMapview'}" style="text-decoration: none; color: inherit;">calculate</router-link></button>
                         <!-- <button class="small ui button" id="calculate" @click="calculateOptimalItinerary">calculate</button> -->
@@ -85,7 +85,9 @@ export default{
         lat:"",
         lng:"",
         origin:[],
+        origin_idx:null,
         destination: [],
+        destination_idx:null,
         stopsArray:[],
         stopsArrayDetail:[],
         allRoutes:[],
@@ -342,18 +344,14 @@ export default{
 
         generateDistanceMatrix(allRoutesData){
             console.log("start generate distance matrix");
-            let origin_idx = null;
-            let destination_idx = null;
             let stops_idx = []
             let distanceMatrix = []
             for (var i=0; i<this.stopsArrayDetail.length;i++){
                 if(this.stopsArrayDetail[i].isOrigin){
-                    console.log("found origin");
-                    origin_idx=i;
+                    this.origin_idx=i;
                 }
                 else if(this.stopsArrayDetail[i].isDestination){
-                    console.log("found destination");
-                    destination_idx=i;
+                    this.destination_idx=i;
                 }
                 else{
                     stops_idx.push(i);
@@ -365,13 +363,13 @@ export default{
             for(var r=0; r<this.stopsArrayDetail.length-1;r++){
                 let temp_row = [];
                 if(r===0){
-                    temp_row.push(allRoutesData[origin_idx][origin_idx]);
+                    temp_row.push(allRoutesData[this.origin_idx][this.origin_idx]);
                     for(var j=0;j<stops_idx.length;j++){
-                        temp_row.push(allRoutesData[origin_idx][stops_idx[j]]);
+                        temp_row.push(allRoutesData[this.origin_idx][stops_idx[j]]);
                     }
                 }
                 else{
-                    temp_row.push(allRoutesData[stops_idx[r-1]][destination_idx]);
+                    temp_row.push(allRoutesData[stops_idx[r-1]][this.destination_idx]);
                     for(var j=0;j<stops_idx.length;j++){
                         temp_row.push(allRoutesData[stops_idx[r-1]][stops_idx[j]])
                     }
@@ -384,6 +382,85 @@ export default{
             return distanceMatrix
         },
 
+        greedyMethod(distanceMatrix,origin=0){
+            let n = distanceMatrix.length;
+
+            let unvisited = new Set();
+            for(var i=0; i<n;i++){
+                unvisited.add(i)
+            }
+
+            let totalDistance = 0;
+            let optimalRoutes = [origin];
+            let cur_node = origin;
+            while (unvisited.size > 1){
+                // console.log(`current node = ${cur_node}`);
+                unvisited.delete(cur_node);
+                // console.log("after delete current node, unvisited becomes=");
+                // console.log(unvisited);
+                let minNode = null;
+                let minDistance = Infinity;
+                unvisited.forEach((node) => {
+                    // console.log(`node=${node}`);
+                    if (distanceMatrix[cur_node][node].duration.value < minDistance){
+                        // console.log(`run here 1, distanceMatrix[cur_node][node]=${distanceMatrix[cur_node][node]}`)
+                        minNode = node;
+                        minDistance = distanceMatrix[cur_node][node].duration.value;
+                    }
+                });
+
+                totalDistance += minDistance;
+                cur_node = minNode;
+                optimalRoutes.push(cur_node);
+                
+            }
+            totalDistance += distanceMatrix[cur_node][origin].duration.value;
+
+            return [optimalRoutes,totalDistance]
+    
+        },
+
+        greedyEnumerateOriginsMethod(distanceMatrix){
+            let n = distanceMatrix.length;
+            let bestResult = [];
+            let bestTotalDistance = Infinity
+            for(var origin=0; origin<n; origin++){
+                let result = this.greedyMethod(distanceMatrix,origin);
+                let tempRoutes = result[0];
+                let tempDistance = result[1];
+                if (tempDistance < bestTotalDistance){
+                    bestTotalDistance = tempDistance;
+                    bestResult = tempRoutes;
+                }
+
+            }
+
+            let originIdx = null;
+            for(var index=0; index<bestResult.length;++index){
+                if (bestResult[index] === 0){
+                    originIdx = index;
+                    break;
+                }
+            }
+            let firstHalf = bestResult.slice(originIdx,);
+            let secondHalf = bestResult.slice(0,originIdx);
+
+            let finalResultIdx = firstHalf.concat(secondHalf);
+
+            finalResultIdx.push(0);
+            console.log("final result index ========");
+            console.log(finalResultIdx);
+            console.log("final routes are:===========")
+            let finalRoutesResults = [];
+            for(var j=0;j<finalResultIdx.length-1;++j){
+                finalRoutesResults.push(this.distanceMatrix[finalResultIdx[j]][finalResultIdx[j+1]]);
+                let thisroute = this.distanceMatrix[finalResultIdx[j]][finalResultIdx[j+1]];
+                console.log(`from ${thisroute.origin.address} to ${thisroute.destination.address}`);
+            }
+            return finalRoutesResults
+        },
+
+
         calculateOptimalItinerary(){
             // this.$router.push({name:"ResultMapview"});
             this.requestRoutesInfo((allRoutesData)=>{
@@ -393,25 +470,21 @@ export default{
 
                 console.log("all stops detail:");
                 console.log(this.stopsArrayDetail);
-                // console.log(`this.allroutes=${this.allRoutes}`);
-                // console.log(`this.allroutes[0][0]=${allRoutesData[0][1]}`);
-                // console.log(this.allRoutes[0][0]);
-                // console.log("emit route-data, this.routes[0][0]");
 
                 this.distanceMatrix = this.generateDistanceMatrix(allRoutesData);
+                let optimalResults = this.greedyEnumerateOriginsMethod(this.distanceMatrix);
+                // optimal_results.push(this.destination_idx);
+                // console.log(optimal_results[0]);
+                // console.log(optimal_results[1]);
 
-                const optimalRoutes = [];
-                var idx = 0;
-                while(idx < allRoutesData.length-1)  {
-                    optimalRoutes.push(allRoutesData[idx][idx+1]);
-                    idx +=1
-                }
-                optimalRoutes.push(allRoutesData[idx][0]);
-                // 0->1->2->3
-                console.log("optimal routes = ")
-                console.log(optimalRoutes);
+                // const optimalRoutes = [];
+                // for(var idx=0;idx<optimal_results.length-1;idx++){
+                //     optimalRoutes.push(allRoutesData[optimal_results[idx]][optimal_results[idx+1]]);
+                // }
+                // console.log("optimal routes = ")
+                // console.log(optimalRoutes);
 
-                let optimalRoutesAndTravelMode = [this.travelMode,optimalRoutes];
+                let optimalRoutesAndTravelMode = [this.travelMode,optimalResults];
                 EventBus.$emit("route-data",optimalRoutesAndTravelMode);
                
                 

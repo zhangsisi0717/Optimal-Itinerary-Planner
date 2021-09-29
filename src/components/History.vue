@@ -1,12 +1,8 @@
 <template>
     <div>
         <h1>Saved Itinerary</h1>
-        <!-- <section class="ui two column grid" id="input-panel"> -->
             <form class="ui segment large form">
-                <div class="item" v-for ="(route, index) in routesHistory" id="saved-routes" @click="renderThisItinerary(route)">
-                    <!-- <button><router-link :to="{ name: 'ResultMapview'}" style="text-decoration: none; color: inherit;">click</router-link></button> -->
-                     <!-- <router-link :to="{ name: 'ResultMapview'}" style="text-decoration: none; color: inherit;"></router-link> -->
-                   
+                <div class="item" v-for ="(route, index) in routesHistory" id="saved-routes" @click="renderThisItinerary(route)">                  
                     <div>
                         <h3>No. {{index+1}}
                         <button id="detail"><router-link :to="{ name: 'ResultMapview'}" style="text-decoration: none; color: inherit;">view detail</router-link></button>
@@ -25,7 +21,6 @@
             
                 </div> 
             </form>
-        <!-- </section> -->
     </div>
 </template>
 <script>
@@ -60,14 +55,8 @@ export default {
     methods:{
         renderThisItinerary(route){
             console.log(route.routes);
-            // EventBus.$emit("route-data-to-routelist",route.routes);
-            // EventBus.$emit("route-data-to-mapview",route.routes);
-
             EventBus.$emit("route-data-to-routelist",route);
             EventBus.$emit("route-data-to-mapview",route);
-            // EventBus.$emit("route-data",route.routes);
-            // this.$router.push({name:'ResultMapview'});
-
         }
     },
     }
